@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
-
-import "../token/ERC20/IERC20.sol";
-import "../interfaces/IERC3156.sol";
-import "../utils/Address.sol";
+import {IERC20} from "../token/ERC20/IERC20.sol";
+import {IERC3156FlashBorrower} from "../interfaces/IERC3156.sol";
+import {Address} from "../utils/Address.sol";
 
 /**
  * @dev WARNING: this IERC3156FlashBorrower mock implementation is for testing purposes ONLY.
@@ -15,7 +14,7 @@ import "../utils/Address.sol";
  * live networks.
  */
 contract ERC3156FlashBorrowerMock is IERC3156FlashBorrower {
-    bytes32 constant internal RETURN_VALUE = keccak256("ERC3156FlashBorrower.onFlashLoan");
+    bytes32 internal constant _RETURN_VALUE = keccak256("ERC3156FlashBorrower.onFlashLoan");
 
     bool immutable _enableApprove;
     bool immutable _enableReturn;
@@ -34,7 +33,7 @@ contract ERC3156FlashBorrowerMock is IERC3156FlashBorrower {
         uint256 amount,
         uint256 fee,
         bytes calldata data
-    ) public override returns (bytes32) {
+    ) public returns (bytes32) {
         require(msg.sender == token);
 
         emit BalanceOf(token, address(this), IERC20(token).balanceOf(address(this)));
@@ -49,6 +48,6 @@ contract ERC3156FlashBorrowerMock is IERC3156FlashBorrower {
             IERC20(token).approve(token, amount + fee);
         }
 
-        return _enableReturn ? RETURN_VALUE : bytes32(0);
+        return _enableReturn ? _RETURN_VALUE : bytes32(0);
     }
 }
